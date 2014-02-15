@@ -1,20 +1,25 @@
 import QtQuick 2.0
 import Box2D 1.0
 import QtQuick.Controls 1.1
+import "experiments"
 
 Rectangle {
     width: 1280
     height: 720
     Project {
+        title: "Pendulum."
         anchors.fill: parent
+        IntroductionExperiment {
+
+        }
+
         Experiment {
             lefts: Column {
                 height: parent.height
                 width: parent.width / 2
                 spacing: parent.width * 0.05
                 Text {
-                    text: "<h1>Pendulum</h1>" +
-                          "The slider below allows you to set the rope length " +
+                    text: "The slider below allows you to set the rope length " +
                           "of the pendulum. See if you can make it have a period " +
                           "of 2 seconds."
                     width: parent.width
@@ -47,12 +52,6 @@ Rectangle {
                 }
                 width: Math.max(100, parent.width / 2)
             }
-        }
-        Rectangle {
-            color: "yellow"
-        }
-        Rectangle {
-            color: "green"
         }
     }
 }

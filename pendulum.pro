@@ -7,7 +7,10 @@ DEPLOYMENTFOLDERS = folder_01
 QML_IMPORT_PATH =
 
 # The .cpp file which was generated for your project. Feel free to hack it.
-SOURCES += main.cpp
+SOURCES += main.cpp \
+latexrunner.cpp
+
+HEADERS += latexrunner.h
 
 # Installation path
 # target.path =

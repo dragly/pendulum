@@ -38,10 +38,6 @@ Rectangle {
         State {
             name: "started"
             PropertyChanges {
-                target: welcomeText
-                visible: false
-            }
-            PropertyChanges {
                 target: whiteOverlay
                 visible: false
             }
@@ -60,8 +56,10 @@ Rectangle {
         id: welcomeAnimation
         NumberAnimation { target: welcomeText; property: "opacity"; duration: 3000; easing.type: Easing.InOutQuad; from: 0; to: 1; }
         ParallelAnimation {
-            NumberAnimation { target: welcomeText; property: "scale"; duration: 2000; easing.type: Easing.InOutQuad; from: 1; to: 0.8 }
-            NumberAnimation { target: welcomeText; property: "opacity"; duration: 2000; easing.type: Easing.InOutQuad; from: 1; to: 0; }
+            NumberAnimation { target: welcomeText; property: "scale"; duration: 1500; easing.type: Easing.InOutQuad; from: 1; to: 0.8 }
+//            NumberAnimation { target: welcomeText; property: "opacity"; duration: 2000; easing.type: Easing.InOutQuad; from: 1; to: 0; }
+            NumberAnimation { target: welcomeText; property: "y"; duration: 1500; easing.type: Easing.InOutQuad; to: parent.height * 0.1 }
+            NumberAnimation { target: experimentsColumn; property: "y"; duration: 1700; easing.type: Easing.InOutQuad; from: parent.height * 2 / 3; to: parent.height * 0.1 }
             NumberAnimation { target: whiteOverlay; property: "opacity"; duration: 2000; easing.type: Easing.InOutQuad; from: 1; to: 0; }
         }
         onStopped: {
@@ -86,8 +84,9 @@ Rectangle {
         }
         Behavior on x {
             NumberAnimation {
-                duration: 400
-                easing.type: Easing.InOutQuad
+                duration: 1000
+                easing.overshoot: 0.5
+                easing.type: Easing.InOutBack
             }
         }
     }
@@ -137,7 +136,9 @@ Rectangle {
 
     Text {
         id: welcomeText
-        anchors.centerIn: parent
+//        anchors.centerIn: parent
+        x: parent.width / 2 - width / 2
+        y: parent.height / 2 - height / 2
         text: "Welcome."
         color: Qt.rgba(0.3, 0.3, 0.3, 1.0)
         font.family: "Linux Libertine"
