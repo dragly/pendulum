@@ -8,10 +8,10 @@ Canvas {
     property point endPoint: Qt.point(100,100)
     antialiasing: true
 
-    x: Math.min(startPoint.x, endPoint.x)
-    y: Math.min(startPoint.y, endPoint.y)
-    width: Math.max(startPoint.x, endPoint.x) - x + 4
-    height: Math.max(startPoint.y, endPoint.y) - y + 4
+    x: Math.min(startPoint.x, endPoint.x) - 4
+    y: Math.min(startPoint.y, endPoint.y) - 4
+    width: Math.max(startPoint.x, endPoint.x) - x + 8
+    height: Math.max(startPoint.y, endPoint.y) - y + 8
 
     onLineWidthChanged:requestPaint();
     onStartPointChanged: requestPaint();

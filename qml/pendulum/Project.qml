@@ -15,7 +15,18 @@ Rectangle {
         for(var i in experimentsColumn.children) {
             var child = experimentsColumn.children[i]
             child.width = projectRoot.width
-            child.height = projectRoot.height
+            child.height = experimentsColumn.height
+        }
+    }
+
+    function resetRunning() {
+        for(var i in experimentsColumn.children) {
+            var child = experimentsColumn.children[i]
+            if(currentExperiment == i) {
+                child.running = true
+            } else {
+                child.running = false
+            }
         }
     }
 
@@ -25,60 +36,103 @@ Rectangle {
         } else if(currentExperiment < 0) {
             currentExperiment = experimentsColumn.children.length - 1
         }
+        resetRunning()
+    }
+
+    state: "welcome"
+    Component.onCompleted: {
+        state = "started"
+        resetRunning()
     }
 
     states: [
         State {
             name: "welcome"
+            AnchorChanges {
+                target: welcomeText
+                anchors.horizontalCenter: projectRoot.horizontalCenter
+                anchors.verticalCenter: projectRoot.verticalCenter
+            }
             PropertyChanges {
-                target: welcomeAnimation
-                running: true
+                target: welcomeText
+                opacity: 0
+            }
+            PropertyChanges {
+                target: experimentsColumn
+                anchors.topMargin: projectRoot.height
             }
         },
         State {
             name: "started"
-            PropertyChanges {
-                target: whiteOverlay
-                visible: false
+            AnchorChanges {
+                target: welcomeText
+                anchors.bottom: projectRoot.top
             }
             PropertyChanges {
-                target: skipArea
-                enabled: false
+                target: welcomeText
+                opacity: 1
+            }
+            PropertyChanges {
+                target: whiteOverlay
+                opacity: 0
+            }
+            PropertyChanges {
+                target: experimentsColumn
+                anchors.topMargin: 0
             }
         }
     ]
 
-    Component.onCompleted: {
-        state = "welcome"
-    }
 
-    SequentialAnimation {
-        id: welcomeAnimation
-        NumberAnimation { target: welcomeText; property: "opacity"; duration: 3000; easing.type: Easing.InOutQuad; from: 0; to: 1; }
-        ParallelAnimation {
-            NumberAnimation { target: welcomeText; property: "scale"; duration: 1500; easing.type: Easing.InOutQuad; from: 1; to: 0.8 }
-//            NumberAnimation { target: welcomeText; property: "opacity"; duration: 2000; easing.type: Easing.InOutQuad; from: 1; to: 0; }
-            NumberAnimation { target: welcomeText; property: "y"; duration: 1500; easing.type: Easing.InOutQuad; to: parent.height * 0.1 }
-            NumberAnimation { target: experimentsColumn; property: "y"; duration: 1700; easing.type: Easing.InOutQuad; from: parent.height * 2 / 3; to: parent.height * 0.1 }
-            NumberAnimation { target: whiteOverlay; property: "opacity"; duration: 2000; easing.type: Easing.InOutQuad; from: 1; to: 0; }
-        }
-        onStopped: {
-            state = "started"
-        }
-    }
 
     transitions: [
         Transition {
-            NumberAnimation { property: "opacity"; duration: 2000; easing.type: Easing.InOutQuad }
+            id: transition
+            from: "welcome"
+            to: "started"
+            SequentialAnimation {
+                NumberAnimation {
+                    target: welcomeText
+                    property: "opacity"
+                    duration: 2000
+                    easing.type: Easing.InOutQuad
+                }
+                ParallelAnimation {
+                    AnchorAnimation {
+                        duration: 2000
+                        easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                        target: experimentsColumn
+                        properties: "anchors.topMargin"
+                        duration: 2000
+                        easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                        target: whiteOverlay
+                        property: "opacity"
+                        duration: 2000
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
+            onRunningChanged: {
+                if(!running) {
+                    skipArea.enabled = false
+                }
+            }
         }
     ]
 
     Row {
         id: experimentsColumn
         x: - projectRoot.width * currentExperiment
-        y: 0
         width: parent.width * children.length
+        anchors.top: parent.top
         height: parent.height
+        onHeightChanged: {
+            layoutChildren()
+        }
         onChildrenChanged: {
             layoutChildren()
         }
@@ -99,7 +153,7 @@ Rectangle {
         }
         width: parent.width * 0.05
         height: width
-        color: "grey"
+//        color: "grey"
 
         MouseArea {
             anchors.fill: parent
@@ -117,7 +171,7 @@ Rectangle {
         }
         width: parent.width * 0.05
         height: width
-        color: "grey"
+//        color: "grey"
 
         MouseArea {
             anchors.fill: parent
@@ -137,8 +191,8 @@ Rectangle {
     Text {
         id: welcomeText
 //        anchors.centerIn: parent
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height / 2
+//        x: parent.width / 2 - width / 2
+//        y: parent.height / 2 - height / 2
         text: "Welcome."
         color: Qt.rgba(0.3, 0.3, 0.3, 1.0)
         font.family: "Linux Libertine"
@@ -150,7 +204,11 @@ Rectangle {
         id: skipArea
         anchors.fill: parent
         onClicked: {
+            console.log("Skip")
+            transition.enabled = false
+            projectRoot.state = "tmp"
             projectRoot.state = "started"
+            skipArea.enabled = false
         }
     }
 }

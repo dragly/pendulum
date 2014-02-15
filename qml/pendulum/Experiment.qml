@@ -3,6 +3,7 @@ import QtQuick 2.0
 Rectangle {
     property alias lefts: lefty.children
     property alias rights: righty.children
+    property bool running: false
     width: 100
     height: 62
     Row {

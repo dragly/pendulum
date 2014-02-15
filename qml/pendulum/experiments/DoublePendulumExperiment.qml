@@ -3,37 +3,29 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import Box2D 1.1
 import ".."
+import "../controls"
+
 Experiment {
     id: experimentRoot
     lefts: Column {
         anchors.fill: parent
-        anchors.margins: parent.width * 0.05
         spacing: parent.width * 0.01
         Text {
-            text: "Pendulum"
+            text: "Double pendulum"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.family: "Linux Libertine"
             font.pixelSize: experimentRoot.width * 0.04
         }
+
         Text {
-            text: "The pendulum to the right consists of a ball, " +
-                  "a massless rod and an attachement point. " +
-                  "The length of the rod and the acceleration of gravity determines the frequency " +
-                  "of the pendulum.\n" +
-                  "\n" +
-                  "Note that the energy is not conserved in this simulation. " +
-                  "There is a bit of friction that causes the pendulum to loose some of its momentum, " +
-                  "forcing it to a full stop in the end. " +
-                  "To restart the simulation, click the Reset-button.\n" +
-                  "\n" +
-                  "This page is only here for your pleasure. Try to interact the pendulum by " +
-                  "dragging the ball around. When you're done playing, click the arrow to " +
-                  "go to the next page.\n\n"
+            text: "<p>You may " +
+                  "play with a double pendulum and their lengths " +
+                  "in this experiment.</p>"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.family: "Linux Libertine"
-            font.pixelSize: parent.width * 0.04
+            font.pixelSize: experimentRoot.width * 0.018
         }
     }
     rights: Item {
@@ -67,7 +59,6 @@ Experiment {
                     maxForce: 10000
                 }
             }
-
             MouseArea {
                 id: mouseArea
                 onPressed: {
@@ -113,16 +104,28 @@ Experiment {
             }
 
             function reset() {
-                ropeJoint.length = global.width * 0.3
                 ball.x = mount.x
-                ball.y = mount.y + ropeJoint.length
-                ball.linearVelocity = Qt.point(150,0)
+                ball.y = mount.y + 100
+                ball2.x = ball.x
+                ball2.y = ball.y + 100
+                ropeJoint.length = Qt.binding(function() {return rodLength1Slider.value})
+                ropeJoint2.length = Qt.binding(function() {return rodLength2Slider.value})
+                ball.linearVelocity = Qt.point(50,0)
+                ball2.linearVelocity = Qt.point(-50,0)
             }
 
             World {
                 id: world
                 anchors.fill: parent
                 running: experimentRoot.running
+
+                Body {
+                    id: anchor
+                    x:300
+                    y: 300
+                    width: 10
+                    height: 10
+                }
 
                 Line {
                     startPoint: Qt.point(ball.x, ball.y)
@@ -131,16 +134,15 @@ Experiment {
                 }
 
                 Line {
-                    opacity: global.joint !== null
-                    startPoint: global.mousePosition
-                    endPoint: global.body ? Qt.point(global.body.x, global.body.y) : Qt.point(0,0)
-                    color: "#F898C8"
+                    startPoint: Qt.point(ball2.x, ball2.y)
+                    endPoint: Qt.point(ball.x, ball.y)
+                    color: "grey"
                 }
 
                 Body {
                     id: mount
                     x: parent.width / 2
-                    y: parent.height / 4
+                    y: parent.height / 3
                     width: parent.width * 0.01
                     height: width
                     bodyType: Body.Static
@@ -163,7 +165,7 @@ Experiment {
 
                 Body {
                     id: ball
-                    width: parent.width * 0.1
+                    width: parent.width * 0.07
                     height: width
                     bodyType: Body.Dynamic
                     fixtures: Circle {
@@ -172,6 +174,43 @@ Experiment {
                         restitution: 0.5
                         friction: 0.0
                     }
+                    sleepingAllowed: false
+//                    linearDamping: airResistanceSlider.value
+
+                    Rectangle {
+                        width: parent.width
+                        height: parent.height
+                        radius: width / 2
+                        color: "#98F8F8"
+                        border.color: "#90C0F8"
+                        border.width: 2
+                        x: - radius
+                        y: - radius
+
+                        MouseArea {
+                            anchors.fill: parent
+                            propagateComposedEvents: true
+                            onPressed: {
+                                global.body = parent.parent
+                                mouse.accepted = false
+                            }
+                        }
+                    }
+                }
+
+                Body {
+                    id: ball2
+                    width: parent.width * 0.07
+                    height: width
+                    bodyType: Body.Dynamic
+                    fixtures: Circle {
+                        anchors.fill: parent
+                        density: 500
+                        restitution: 0.5
+                        friction: 0.0
+                    }
+                    sleepingAllowed: false
+//                    linearDamping: airResistanceSlider.value
 
                     Rectangle {
                         width: parent.width
@@ -199,35 +238,57 @@ Experiment {
                     world: world
                     bodyA: ball
                     bodyB: mount
-                    length: global.width * 0.3
                 }
 
-                Body {
-                    id: anchor
-                    x:300
-                    y: 300
-                    width: 10
-                    height: 10
+                DistanceJoint {
+                    id: ropeJoint2
+                    world: world
+                    bodyA: ball2
+                    bodyB: ball
                 }
             }
         }
-        Row {
+        Column {
             id: buttonRow
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.bottom
             }
-            height: resetButton.height
-
-//            Button {
-//                text: world.running ? "Pause" : "Resume"
-//                onClicked: {
-//                    world.running = !world.running
-//                }
-//            }
+            spacing: experimentRoot.width * 0.01
+            LabeledSlider {
+                id: rodLength1Slider
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: global.width * 0.5
+                label: "Rod length 1:"
+                comment: (value / 32).toFixed(1) + " m"
+                slider.minimumValue: parent.width * 0.2
+                slider.maximumValue: parent.width * 0.4
+                slider.value: 1000
+                font.family: "Linux Libertine"
+                font.pixelSize: experimentRoot.width * 0.015
+            }
+            LabeledSlider {
+                id: rodLength2Slider
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: global.width * 0.5
+                label: "Rod length 2:"
+                comment: (value / 32).toFixed(1) + " m"
+                slider.minimumValue: parent.width * 0.2
+                slider.maximumValue: parent.width * 0.4
+                slider.value: 1000
+                font.family: "Linux Libertine"
+                font.pixelSize: experimentRoot.width * 0.015
+            }
             Button {
                 id: resetButton
                 text: "Reset"
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
                 onClicked: {
                     global.reset()
                 }
