@@ -140,10 +140,10 @@ Rectangle {
             if(dragStarted) {
                 var diffX = mouse.x - mouseStart.x
                 var diffY = mouse.y - mouseStart.y
-                if(diffX < -projectRoot.width / 3) {
+                if(diffX < -projectRoot.width / 4) {
                     currentExperiment += 1
                     dragStarted = false
-                } else if(diffX > projectRoot.width / 3) {
+                } else if(diffX > projectRoot.width / 4) {
                     currentExperiment -= 1
                     dragStarted = false
                 }

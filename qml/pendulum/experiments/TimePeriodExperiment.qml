@@ -33,7 +33,6 @@ Experiment {
 //            height: width
             anchors.horizontalCenter: parent.horizontalCenter
         }
-
         Text {
             text: "<p>where g is the acceleration of gravity. " +
                   "In this experiment, g = " + world.gravity.y.toFixed(1) +
