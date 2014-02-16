@@ -32,7 +32,7 @@ Experiment {
         }
 
         Image {
-            source: "air-resistance.svg"
+            source: "air-resistance.png"
             fillMode: Image.PreserveAspectFit
             sourceSize.width: width * 1.4
             width: parent.width / 5

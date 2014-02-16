@@ -26,7 +26,7 @@ Experiment {
             font.pixelSize: experimentRoot.width * 0.018
         }
         Image {
-            source: "pendulum-period.svg"
+            source: "pendulum-period.png"
             fillMode: Image.PreserveAspectFit
             sourceSize.width: width * 1.4
             width: parent.width / 5
@@ -105,7 +105,7 @@ Experiment {
                         elapsed = 0
                     }
 
-                    running: true
+                    running: experimentRoot.running
                     interval: 50
                     repeat: true
                     onTriggered: {
