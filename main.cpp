@@ -9,7 +9,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<LatexRunner>("LatexPresentation", 1, 0, "LatexRunner");
 
     QtQuick2ApplicationViewer viewer;
-    viewer.setMainQmlFile(QStringLiteral("qml/pendulum/main.qml"));
+//    viewer.setMainQmlFile(QStringLiteral("qrc:/qml/pendulum/main.qml"));
+    viewer.setSource(QUrl("qrc:/qml/pendulum/main.qml"));
     viewer.showExpanded();
 
     return app.exec();

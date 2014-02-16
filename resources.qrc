@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/pendulum/Experiment.qml</file>
+        <file>qml/pendulum/formula.tex</file>
+        <file>qml/pendulum/Latex.qml</file>
+        <file>qml/pendulum/Line.qml</file>
+        <file>qml/pendulum/main.qml</file>
+        <file>qml/pendulum/MovableBox.qml</file>
+        <file>qml/pendulum/Pendulum.qml</file>
+        <file>qml/pendulum/Project.qml</file>
+        <file>qml/pendulum/Wall.qml</file>
+        <file>qml/pendulum/controls/LabeledSlider.qml</file>
+        <file>qml/pendulum/experiments/air-resistance.png</file>
+        <file>qml/pendulum/experiments/air-resistance.svg</file>
+        <file>qml/pendulum/experiments/AirResistanceExperiment.qml</file>
+        <file>qml/pendulum/experiments/DoublePendulumExperiment.qml</file>
+        <file>qml/pendulum/experiments/IntroductionExperiment.qml</file>
+        <file>qml/pendulum/experiments/pendulum-period.png</file>
+        <file>qml/pendulum/experiments/pendulum-period.svg</file>
+        <file>qml/pendulum/experiments/TimePeriodExperiment.qml</file>
+    </qresource>
+</RCC>
