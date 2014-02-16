@@ -22,8 +22,32 @@ Experiment {
             text: "<p>The energy of a pendulum is not conserved " +
                   "if there is friction or air resistance in the " +
                   "system.</p><br>" +
+                  "<p>In this experiment we have added a drag " +
+                  "force that you may control by changing the " +
+                  "drag coefficient D. The force is given as</p>"
+            width: parent.width
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            font.family: "Linux Libertine"
+            font.pixelSize: experimentRoot.width * 0.018
+        }
+
+        Image {
+            source: "air-resistance.svg"
+            fillMode: Image.PreserveAspectFit
+            sourceSize.width: width * 1.4
+            width: parent.width / 5
+//            height: width
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Text {
+            text: "<p>where v is the velocity of the ball.</p><br>" +
                   "<p>Use the sliders to adjust the level of " +
-                  "air resistance for this pendulum.</p>"
+                  "air resistance for this pendulum.</p><br>" +
+                  "<p>What does the initial velocity have to be to " +
+                  "for the ball to make a complete loop? " +
+                  "The length of the rod is " +
+                  (global.rodLength / 32).toFixed(1) + " m</p>"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.family: "Linux Libertine"
@@ -34,6 +58,7 @@ Experiment {
         anchors.fill: parent
         Rectangle {
             id: global
+            property real rodLength: parent.width * 0.3
             anchors {
                 left: parent.left
                 right: parent.right
@@ -47,9 +72,9 @@ Experiment {
 
             function reset() {
                 ball.x = mount.x
-                ball.y = mount.y + parent.width * 0.3
-                ropeJoint.length = parent.width * 0.3
-                ball.targetVelocity = Qt.point(300,0)
+                ball.y = mount.y + rodLength
+                ropeJoint.length = rodLength
+                ball.targetVelocity = Qt.point(initialVelocitySlider.value,0)
                 ball.linearVelocity = ball.targetVelocity
             }
 
@@ -121,6 +146,7 @@ Experiment {
                     world: world
                     bodyA: ball
                     bodyB: mount
+                    length: global.rodLength
                 }
 
                 onStepped: {
@@ -145,17 +171,31 @@ Experiment {
                     horizontalCenter: parent.horizontalCenter
                 }
                 width: global.width * 0.5
-                label: "Air resistance:"
-                comment: value.toFixed(1)
-                slider.minimumValue: 0.0
+                label: "Air resistance coefficient:"
+                comment: value.toFixed(1) + " kg/m"
+                slider.minimumValue: 0.1
                 slider.maximumValue: 1.0
                 slider.value: 0
                 font.family: "Linux Libertine"
                 font.pixelSize: experimentRoot.width * 0.015
             }
+            LabeledSlider {
+                id: initialVelocitySlider
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                }
+                width: global.width * 0.5
+                label: "Initial velocity:"
+                comment: (value / 32).toFixed(1) + " m/s"
+                slider.minimumValue: 50
+                slider.maximumValue: 1000
+                slider.value: 200
+                font.family: "Linux Libertine"
+                font.pixelSize: experimentRoot.width * 0.015
+            }
             Button {
                 id: resetButton
-                text: "Reset"
+                text: "Launch again"
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                 }

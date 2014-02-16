@@ -124,6 +124,34 @@ Rectangle {
         }
     ]
 
+    MouseArea {
+        id: nextExperimentArea
+        property bool dragStarted: false
+        property point mouseStart
+        anchors.fill: parent
+        onPressed: {
+            dragStarted = true
+            mouseStart = Qt.point(mouse.x, mouse.y)
+        }
+        onPositionChanged: {
+            if(dragStarted) {
+                var diffX = mouse.x - mouseStart.x
+                var diffY = mouse.y - mouseStart.y
+                if(diffX < -projectRoot.width / 3) {
+                    currentExperiment += 1
+                    dragStarted = false
+                } else if(diffX > projectRoot.width / 3) {
+                    currentExperiment -= 1
+                    dragStarted = false
+                }
+            }
+        }
+
+        onReleased: {
+            dragStarted = false
+        }
+    }
+
     Row {
         id: experimentsColumn
         x: - projectRoot.width * currentExperiment
@@ -138,9 +166,9 @@ Rectangle {
         }
         Behavior on x {
             NumberAnimation {
-                duration: 1000
+                duration: 500
                 easing.overshoot: 0.5
-                easing.type: Easing.InOutBack
+                easing.type: Easing.InOutQuad
             }
         }
     }

@@ -7,7 +7,6 @@ Experiment {
     id: experimentRoot
     lefts: Column {
         anchors.fill: parent
-        anchors.margins: parent.width * 0.05
         spacing: parent.width * 0.01
         Text {
             text: "Pendulum"
@@ -17,19 +16,21 @@ Experiment {
             font.pixelSize: experimentRoot.width * 0.04
         }
         Text {
-            text: "The pendulum to the right consists of a ball, " +
-                  "a massless rod and an attachement point. " +
-                  "The length of the rod and the acceleration of gravity determines the frequency " +
-                  "of the pendulum.\n" +
-                  "\n" +
-                  "Note that the energy is not conserved in this simulation. " +
-                  "There is a bit of friction that causes the pendulum to loose some of its momentum, " +
-                  "forcing it to a full stop in the end. " +
-                  "To restart the simulation, click the Reset-button.\n" +
-                  "\n" +
-                  "This page is only here for your pleasure. Try to interact the pendulum by " +
-                  "dragging the ball around. When you're done playing, click the arrow to " +
-                  "go to the next page.\n\n"
+            text: "<p>The pendulum to the right consists of a ball and " +
+                  "a massless rod attached to a point. " +
+                  "The frequency and the period of the pendulum is determined " +
+                  "by the length of the rod and the acceleration "+
+                  "of gravity.</p><br>" +
+                  "<p>Energy is not conserved in this simulation. " +
+                  "There is a bit of friction that causes the pendulum " +
+                  "to lose some of its energy with time, eventually leading " +
+                  "it to a full stop in the end. " +
+                  "To restart the simulation, click the Reset-button.</p><br>" +
+                  "<p>This page is here for your pleasure. " +
+                  "Try to interact the pendulum by " +
+                  "dragging the ball around. " +
+                  "When you're done playing, click the arrow to " +
+                  "go to the next page.</p>"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.family: "Linux Libertine"
@@ -72,7 +73,10 @@ Experiment {
                 id: mouseArea
                 onPressed: {
                     global.mousePosition = Qt.point(mouse.x, mouse.y)
-                    global.createJoint(mouse.x,mouse.y);
+                    global.createJoint(mouse.x,mouse.y)
+                    if(!global.body) {
+                        mouse.accepted = false
+                    }
                 }
                 onReleased: {
                     global.mousePosition = Qt.point(mouse.x, mouse.y)
@@ -90,9 +94,13 @@ Experiment {
             }
 
             function createJoint(x,y) {
-                if(global.joint != null) destroyJoint();
+                if(global.joint != null) {
+                    destroyJoint()
+                }
                 var body = global.body;
-                if(body == null) return;
+                if(body == null) {
+                    return false
+                }
                 var mouseJoint = jointComponent.createObject(world);
                 mouseJoint.target = Qt.point(x,y);
                 mouseJoint.bodyB = body;
@@ -100,6 +108,7 @@ Experiment {
                 mouseJoint.maxForce = body.getMass() * 3000.0;
                 global.dragged = true;
                 global.joint = mouseJoint;
+                return true
             }
 
             function destroyJoint() {

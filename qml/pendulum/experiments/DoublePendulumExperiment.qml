@@ -19,9 +19,20 @@ Experiment {
         }
 
         Text {
-            text: "<p>You may " +
-                  "play with a double pendulum and their lengths " +
-                  "in this experiment.</p>"
+            text: "<p>The double pendulum is much more complex " +
+                  "than its single counterpart. Its motion is very " +
+                  "dynamic and sensitive to the initial conditions. " +
+                  "A set of coupled ordinary " +
+                  "differential equations determined the motion, and while " +
+                  "this is a bit out of the scope " +
+                  "for our current demonstration, we have left in an experiment " +
+                  "for you to explore on your own.</p><br>" +
+                  "<p>You may set the lengths of the rods of this double " +
+                  "pendulum, and move them around by dragging them. " +
+                  "If you release them with some speed, you may try out " +
+                  "different combinations of initial positions and velocities. " +
+                  "And yes, there is a small amount of friction in this system " +
+                  "as well.</p>"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.family: "Linux Libertine"
@@ -63,7 +74,10 @@ Experiment {
                 id: mouseArea
                 onPressed: {
                     global.mousePosition = Qt.point(mouse.x, mouse.y)
-                    global.createJoint(mouse.x,mouse.y);
+                    global.createJoint(mouse.x,mouse.y)
+                    if(!global.body) {
+                        mouse.accepted = false
+                    }
                 }
                 onReleased: {
                     global.mousePosition = Qt.point(mouse.x, mouse.y)
@@ -81,9 +95,13 @@ Experiment {
             }
 
             function createJoint(x,y) {
-                if(global.joint != null) destroyJoint();
+                if(global.joint != null) {
+                    destroyJoint()
+                }
                 var body = global.body;
-                if(body == null) return;
+                if(body == null) {
+                    return false
+                }
                 var mouseJoint = jointComponent.createObject(world);
                 mouseJoint.target = Qt.point(x,y);
                 mouseJoint.bodyB = body;

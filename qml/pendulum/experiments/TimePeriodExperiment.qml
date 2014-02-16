@@ -11,7 +11,7 @@ Experiment {
         anchors.fill: parent
         spacing: parent.width * 0.01
         Text {
-            text: "Period of pendulum"
+            text: "Period of a pendulum"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.family: "Linux Libertine"
@@ -19,12 +19,25 @@ Experiment {
         }
 
         Text {
-            text: "<p>The relation between a pendulum's period, T, and its length, L, is for small angles approximated by " +
-                  "T = 2π √(L/g), " +
-                  "where g is the acceleration of gravity. " +
+            text: "<p>The relation between a pendulum's period, T, and its length, L, is for small angles approximated by "
+            width: parent.width
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            font.family: "Linux Libertine"
+            font.pixelSize: experimentRoot.width * 0.018
+        }
+        Image {
+            source: "pendulum-period.svg"
+            fillMode: Image.PreserveAspectFit
+            sourceSize.width: width * 1.4
+            width: parent.width / 5
+//            height: width
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Text {
+            text: "<p>where g is the acceleration of gravity. " +
                   "In this experiment, g = " + world.gravity.y.toFixed(1) +
-                  " m/s².</p><br>" +
-                  "<p>This means that all other properties of the experiment, " +
+                  " m/s². This means that all other properties of the experiment, " +
                   "such as the initial velocity or the mass of the pendulum " +
                   "won't affect the period, as long as the angles " +
                   "are always small.</p><br>" +
@@ -33,9 +46,7 @@ Experiment {
                   "before restarting the experiment " +
                   "by clicking the Go! button.</p><br>" +
                   "<p>See if you can make the period of the pendulum become " +
-                  "approximately 3 seconds. Also, check if the period is the same if you " +
-                  "increase the initial velocity so much that the angle " +
-                  "becomes large.</p>"
+                  "approximately 3 seconds with a small angle.</p>"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.family: "Linux Libertine"
@@ -188,13 +199,15 @@ Experiment {
                         friction: 0.0
                     }
                     onXChanged: {
-                        if(x > global.width / 2 && prevX <= global.width / 2) {
-                            periodTimer.lap()
-                            // Regain energy
-                            ball.linearVelocity = ball.targetVelocity
-                        } else if(x <= global.width / 2 && prevX > global.width / 2) {
-                            // Regain energy
-                            ball.linearVelocity = Qt.point(-ball.targetVelocity.x, 0)
+                        if(y > mount.y) {
+                            if(x > global.width / 2 && prevX <= global.width / 2) {
+                                periodTimer.lap()
+                                // Regain energy
+                                linearVelocity = targetVelocity
+                            } else if(x <= global.width / 2 && prevX > global.width / 2) {
+                                // Regain energy
+                                linearVelocity = Qt.point(-targetVelocity.x, 0)
+                            }
                         }
 
                         prevX = x
