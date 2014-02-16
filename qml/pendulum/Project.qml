@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtGraphicalEffects 1.0
 
 Rectangle {
     id: projectRoot
@@ -32,9 +33,11 @@ Rectangle {
 
     onCurrentExperimentChanged: {
         if(currentExperiment >= experimentsColumn.children.length) {
-            currentExperiment = 0
-        } else if(currentExperiment < 0) {
             currentExperiment = experimentsColumn.children.length - 1
+            endRectangleAnimation.restart()
+        } else if(currentExperiment < 0) {
+            currentExperiment = 0
+            startRectangleAnimation.restart()
         }
         resetRunning()
     }
@@ -237,6 +240,90 @@ Rectangle {
             projectRoot.state = "tmp"
             projectRoot.state = "started"
             skipArea.enabled = false
+        }
+    }
+
+    RadialGradient {
+        id: startRectangle
+
+        anchors {
+            left: parent.left
+            top: parent.top
+            bottom: parent.bottom
+        }
+        horizontalOffset: -width * 0.8
+
+        gradient: Gradient {
+            GradientStop {
+                position: 0
+                color: "#98F8F8"
+            }
+            GradientStop {
+                position: 1
+                color: "transparent"
+            }
+        }
+
+        width: parent.width / 20
+        opacity: 0
+        SequentialAnimation {
+            id: startRectangleAnimation
+            NumberAnimation {
+                target: startRectangle
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: 200
+            }
+            NumberAnimation {
+                target: startRectangle
+                property: "opacity"
+                from: 1
+                to: 0
+                duration: 600
+            }
+        }
+    }
+
+    RadialGradient {
+        id: endRectangle
+
+        anchors {
+            right: parent.right
+            top: parent.top
+            bottom: parent.bottom
+        }
+        horizontalOffset: width * 0.8
+
+        gradient: Gradient {
+            GradientStop {
+                position: 0
+                color: "#98F8F8"
+            }
+            GradientStop {
+                position: 1
+                color: "transparent"
+            }
+        }
+
+        width: parent.width / 20
+        opacity: 0
+        SequentialAnimation {
+            id: endRectangleAnimation
+            NumberAnimation {
+                target: endRectangle
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: 200
+            }
+            NumberAnimation {
+                target: endRectangle
+                property: "opacity"
+                from: 1
+                to: 0
+                duration: 600
+            }
         }
     }
 }

@@ -29,7 +29,7 @@ Experiment {
                   "<p>This page is here for your pleasure. " +
                   "Try to interact the pendulum by " +
                   "dragging the ball around. " +
-                  "When you're done playing, click the arrow to " +
+                  "When you're done playing, swipe to the left to " +
                   "go to the next page.</p>"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
