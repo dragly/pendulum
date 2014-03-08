@@ -18,5 +18,20 @@
         <file>qml/pendulum/experiments/pendulum-period.png</file>
         <file>qml/pendulum/experiments/pendulum-period.svg</file>
         <file>qml/pendulum/experiments/TimePeriodExperiment.qml</file>
+        <file>qml/pendulum/ProjectList.qml</file>
+        <file>qml/pendulum/SingleItem.qml</file>
+        <file>fonts/roboto/LICENSE.txt</file>
+        <file>fonts/roboto/Roboto-Black.ttf</file>
+        <file>fonts/roboto/Roboto-BlackItalic.ttf</file>
+        <file>fonts/roboto/Roboto-Bold.ttf</file>
+        <file>fonts/roboto/Roboto-BoldItalic.ttf</file>
+        <file>fonts/roboto/Roboto-Italic.ttf</file>
+        <file>fonts/roboto/Roboto-Light.ttf</file>
+        <file>fonts/roboto/Roboto-LightItalic.ttf</file>
+        <file>fonts/roboto/Roboto-Medium.ttf</file>
+        <file>fonts/roboto/Roboto-MediumItalic.ttf</file>
+        <file>fonts/roboto/Roboto-Regular.ttf</file>
+        <file>fonts/roboto/Roboto-Thin.ttf</file>
+        <file>fonts/roboto/Roboto-ThinItalic.ttf</file>
     </qresource>
 </RCC>

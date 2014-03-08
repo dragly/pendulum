@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: projectRoot
-    default property alias experiments: experimentsColumn.children
+    default property alias experiments: experimentsRow.children
     property alias title: welcomeText.text
     property int currentExperiment: 0
     width: 100
@@ -13,16 +13,16 @@ Rectangle {
     onHeightChanged: layoutChildren()
 
     function layoutChildren() {
-        for(var i in experimentsColumn.children) {
-            var child = experimentsColumn.children[i]
+        for(var i in experimentsRow.children) {
+            var child = experimentsRow.children[i]
             child.width = projectRoot.width
-            child.height = experimentsColumn.height
+            child.height = experimentsRow.height
         }
     }
 
     function resetRunning() {
-        for(var i in experimentsColumn.children) {
-            var child = experimentsColumn.children[i]
+        for(var i in experimentsRow.children) {
+            var child = experimentsRow.children[i]
             if(currentExperiment == i) {
                 child.running = true
             } else {
@@ -32,8 +32,8 @@ Rectangle {
     }
 
     onCurrentExperimentChanged: {
-        if(currentExperiment >= experimentsColumn.children.length) {
-            currentExperiment = experimentsColumn.children.length - 1
+        if(currentExperiment >= experimentsRow.children.length) {
+            currentExperiment = experimentsRow.children.length - 1
             endRectangleAnimation.restart()
         } else if(currentExperiment < 0) {
             currentExperiment = 0
@@ -44,88 +44,8 @@ Rectangle {
 
     state: "welcome"
     Component.onCompleted: {
-        state = "started"
         resetRunning()
     }
-
-    states: [
-        State {
-            name: "welcome"
-            AnchorChanges {
-                target: welcomeText
-                anchors.horizontalCenter: projectRoot.horizontalCenter
-                anchors.verticalCenter: projectRoot.verticalCenter
-            }
-            PropertyChanges {
-                target: welcomeText
-                opacity: 0
-            }
-            PropertyChanges {
-                target: experimentsColumn
-                anchors.topMargin: projectRoot.height
-            }
-        },
-        State {
-            name: "started"
-            AnchorChanges {
-                target: welcomeText
-                anchors.bottom: projectRoot.top
-            }
-            PropertyChanges {
-                target: welcomeText
-                opacity: 1
-            }
-            PropertyChanges {
-                target: whiteOverlay
-                opacity: 0
-            }
-            PropertyChanges {
-                target: experimentsColumn
-                anchors.topMargin: 0
-            }
-        }
-    ]
-
-
-
-    transitions: [
-        Transition {
-            id: transition
-            from: "welcome"
-            to: "started"
-            SequentialAnimation {
-                NumberAnimation {
-                    target: welcomeText
-                    property: "opacity"
-                    duration: 2000
-                    easing.type: Easing.InOutQuad
-                }
-                ParallelAnimation {
-                    AnchorAnimation {
-                        duration: 2000
-                        easing.type: Easing.InOutQuad
-                    }
-                    NumberAnimation {
-                        target: experimentsColumn
-                        properties: "anchors.topMargin"
-                        duration: 2000
-                        easing.type: Easing.InOutQuad
-                    }
-                    NumberAnimation {
-                        target: whiteOverlay
-                        property: "opacity"
-                        duration: 2000
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
-            onRunningChanged: {
-                if(!running) {
-                    skipArea.enabled = false
-                }
-            }
-        }
-    ]
 
     MouseArea {
         id: nextExperimentArea
@@ -156,7 +76,7 @@ Rectangle {
     }
 
     Row {
-        id: experimentsColumn
+        id: experimentsRow
         x: - projectRoot.width * currentExperiment
         width: parent.width * children.length
         anchors.top: parent.top
@@ -226,7 +146,7 @@ Rectangle {
 //        y: parent.height / 2 - height / 2
         text: "Welcome."
         color: Qt.rgba(0.3, 0.3, 0.3, 1.0)
-        font.family: "Linux Libertine"
+        font.family: "Roboto"
         font.weight: Font.Light
         font.pixelSize: parent.width * 0.05
     }
@@ -326,4 +246,83 @@ Rectangle {
             }
         }
     }
+
+    states: [
+        State {
+            name: "welcome"
+            AnchorChanges {
+                target: welcomeText
+                anchors.horizontalCenter: projectRoot.horizontalCenter
+                anchors.verticalCenter: projectRoot.verticalCenter
+            }
+            PropertyChanges {
+                target: welcomeText
+                opacity: 0
+            }
+            PropertyChanges {
+                target: experimentsRow
+                anchors.topMargin: projectRoot.height
+            }
+        },
+        State {
+            name: "started"
+            AnchorChanges {
+                target: welcomeText
+                anchors.bottom: projectRoot.top
+            }
+            PropertyChanges {
+                target: welcomeText
+                opacity: 1
+            }
+            PropertyChanges {
+                target: whiteOverlay
+                opacity: 0
+            }
+            PropertyChanges {
+                target: experimentsRow
+                anchors.topMargin: 0
+            }
+        }
+    ]
+
+
+
+    transitions: [
+        Transition {
+            id: transition
+            from: "welcome"
+            to: "started"
+            SequentialAnimation {
+                NumberAnimation {
+                    target: welcomeText
+                    property: "opacity"
+                    duration: 2000
+                    easing.type: Easing.InOutQuad
+                }
+                ParallelAnimation {
+                    AnchorAnimation {
+                        duration: 2000
+                        easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                        target: experimentsRow
+                        properties: "anchors.topMargin"
+                        duration: 2000
+                        easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                        target: whiteOverlay
+                        property: "opacity"
+                        duration: 2000
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
+            onRunningChanged: {
+                if(!running) {
+                    skipArea.enabled = false
+                }
+            }
+        }
+    ]
 }

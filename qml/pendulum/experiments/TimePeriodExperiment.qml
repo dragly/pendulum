@@ -14,7 +14,7 @@ Experiment {
             text: "Period of a pendulum"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            font.family: "Linux Libertine"
+            font.family: "Roboto"
             font.pixelSize: experimentRoot.width * 0.04
         }
 

@@ -14,7 +14,7 @@ Experiment {
             text: "Air resistance"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            font.family: "Linux Libertine"
+            font.family: "Roboto"
             font.pixelSize: experimentRoot.width * 0.04
         }
 
