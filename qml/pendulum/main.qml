@@ -17,6 +17,9 @@ Rectangle {
         Project {
             anchors.fill: parent
             title: "Friction"
+            DropExperiment {
+
+            }
         }
         Project {
             anchors.fill: parent

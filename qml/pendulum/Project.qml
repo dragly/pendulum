@@ -4,13 +4,15 @@ import QtGraphicalEffects 1.0
 Rectangle {
     id: projectRoot
     default property alias experiments: experimentsRow.children
+    property bool running: false
     property alias title: welcomeText.text
-    property int currentExperiment: 0
+    property int currentExperimentIndex: 0
     width: 100
     height: 62
 
     onWidthChanged: layoutChildren()
     onHeightChanged: layoutChildren()
+    onRunningChanged: resetRunning()
 
     function layoutChildren() {
         for(var i in experimentsRow.children) {
@@ -23,7 +25,7 @@ Rectangle {
     function resetRunning() {
         for(var i in experimentsRow.children) {
             var child = experimentsRow.children[i]
-            if(currentExperiment == i) {
+            if(projectRoot.running && currentExperimentIndex === parseInt(i)) {
                 child.running = true
             } else {
                 child.running = false
@@ -31,12 +33,12 @@ Rectangle {
         }
     }
 
-    onCurrentExperimentChanged: {
-        if(currentExperiment >= experimentsRow.children.length) {
-            currentExperiment = experimentsRow.children.length - 1
+    onCurrentExperimentIndexChanged: {
+        if(currentExperimentIndex >= experimentsRow.children.length) {
+            currentExperimentIndex = experimentsRow.children.length - 1
             endRectangleAnimation.restart()
-        } else if(currentExperiment < 0) {
-            currentExperiment = 0
+        } else if(currentExperimentIndex < 0) {
+            currentExperimentIndex = 0
             startRectangleAnimation.restart()
         }
         resetRunning()
@@ -61,10 +63,10 @@ Rectangle {
                 var diffX = mouse.x - mouseStart.x
                 var diffY = mouse.y - mouseStart.y
                 if(diffX < -projectRoot.width / 4) {
-                    currentExperiment += 1
+                    currentExperimentIndex += 1
                     dragStarted = false
                 } else if(diffX > projectRoot.width / 4) {
-                    currentExperiment -= 1
+                    currentExperimentIndex -= 1
                     dragStarted = false
                 }
             }
@@ -77,7 +79,7 @@ Rectangle {
 
     Row {
         id: experimentsRow
-        x: - projectRoot.width * currentExperiment
+        x: - projectRoot.width * currentExperimentIndex
         width: parent.width * children.length
         anchors.top: parent.top
         height: parent.height
@@ -109,7 +111,7 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                currentExperiment += 1
+                currentExperimentIndex += 1
             }
         }
     }
@@ -127,7 +129,7 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                currentExperiment -= 1
+                currentExperimentIndex -= 1
             }
         }
     }
@@ -155,10 +157,10 @@ Rectangle {
         id: skipArea
         anchors.fill: parent
         onClicked: {
-            console.log("Skip")
             transition.enabled = false
             projectRoot.state = "tmp"
             projectRoot.state = "started"
+            projectRoot.running = true
             skipArea.enabled = false
         }
     }
@@ -321,6 +323,7 @@ Rectangle {
             onRunningChanged: {
                 if(!running) {
                     skipArea.enabled = false
+                    projectRoot.running = true
                 }
             }
         }

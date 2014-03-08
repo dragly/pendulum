@@ -33,5 +33,6 @@
         <file>fonts/roboto/Roboto-Regular.ttf</file>
         <file>fonts/roboto/Roboto-Thin.ttf</file>
         <file>fonts/roboto/Roboto-ThinItalic.ttf</file>
+        <file>qml/pendulum/experiments/DropExperiment.qml</file>
     </qresource>
 </RCC>
