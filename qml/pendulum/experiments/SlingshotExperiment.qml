@@ -24,48 +24,17 @@ Experiment {
 
             function reset() {
                 ball.reset()
-                currentTimeTimer.reset()
-                statusText.text = ""
+                for(var i = 0; i < blockRepeater.model; i++) {
+                    if(blockRepeater.itemAt(i)) {
+                        blockRepeater.itemAt(i).reset()
+                    }
+                }
             }
 
-            Text {
-                id: statusText
-                anchors.centerIn: parent
-                text: ""
-                font.family: "Linux Libertine"
-                font.pixelSize: global.width * 0.1
-            }
-
-            Text {
-                id: currentTimeText
-                anchors.top: parent.top
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: "Time: " + (currentTimeTimer.elapsed/1000).toFixed(1)
-                font.family: "Linux Libertine"
-                font.pixelSize: experimentRoot.width * 0.015
-
-                Timer {
-                    id: currentTimeTimer
-                    property int elapsed: 0
-                    property int previousElapsed: 0
-                    property double previousTime: 0
-
-                    function reset() {
-                        previousElapsed = 0
-                        elapsed = 0
-                    }
-
-                    running: world.running
-                    interval: 50
-                    repeat: true
-                    onTriggered: {
-                        var currentTime = Date.now()
-                        if(previousTime > 0) {
-                            var diff = currentTime - previousTime
-                            elapsed += diff
-                        }
-                        previousTime = currentTime
-                    }
+            MouseArea {
+                anchors.fill: parent
+                onPressed: {
+                    ball.reset()
                 }
             }
 
@@ -73,7 +42,7 @@ Experiment {
                 id: world
                 anchors.fill: parent
 
-                running: false
+                running: experimentRoot.running
 
                 Body {
                     id: ball
@@ -87,6 +56,7 @@ Experiment {
                     onStartPositionChanged: global.reset()
 
                     function reset() {
+                        ballMouseArea.enabled = true
                         linearVelocity.x = 0
                         linearVelocity.y = 0
                         angularVelocity = 0
@@ -95,6 +65,7 @@ Experiment {
                         y = startPosition.y
                         hasCollidedWithCart = false
                         hasCollidedWithOther = false
+                        gravityScale = 0
                     }
 
                     width: parent.width * 0.05
@@ -119,6 +90,7 @@ Experiment {
                         border.color: "#90C0F8"
                         border.width: 2
                         MouseArea {
+                            id: ballMouseArea
                             anchors.fill: parent
                             drag.target: ball
                             onPressed: {
@@ -126,10 +98,10 @@ Experiment {
                             }
 
                             onReleased: {
-                                drag.target = null
+                                ballMouseArea.enabled = false
+                                ball.gravityScale = 1
                                 ball.linearVelocity.x = ball.springConstant * (ball.startPosition.x - ball.x)
                                 ball.linearVelocity.y = ball.springConstant * (ball.startPosition.y - ball.y)
-                                world.running = true
                                 slingshotLine.visible = false
                             }
                         }
@@ -145,20 +117,21 @@ Experiment {
                 }
 
                 Repeater {
-                    model: 10
+                    id: blockRepeater
+                    property int total: 25
+                    property int columns: 5
+                    model: total
                     delegate: Body {
-//                        x: world.width * 0.6 + width * index
-//                        y: world.width * 0.6 + width * index
-//                        width: parent.width > 0 ? world.width * 0.02 : 5
-//                        height: parent.width > 0 ? world.width * 0.02 : 5
-                        x: 100 + index * 50
-                        y: 100
-                        width: 50
-                        height: 50
+                        function reset() {
+                            x = world.width * 0.6 + width * parseInt(index % blockRepeater.columns)
+                            y = ground.y - height * (1 + parseInt(index / blockRepeater.columns))
+                        }
+                        width: world.width > 0 ? world.width * 0.04 : 5
+                        height: world.width > 0 ? world.width * 0.04 : 5
                         bodyType: Body.Dynamic
                         fixtures: Box {
                             anchors.fill: parent
-                            density: 10
+                            density: 2
                             friction: 1.0
                             restitution: 0.4
                         }
