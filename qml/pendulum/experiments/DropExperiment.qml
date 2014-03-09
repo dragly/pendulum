@@ -56,7 +56,7 @@ Experiment {
             function reset() {
                 ball.reset()
                 cart.reset()
-                currentTimeTimer.reset()
+                currentTimeText.reset()
                 statusText.text = ""
             }
 
@@ -70,35 +70,40 @@ Experiment {
 
             Text {
                 id: currentTimeText
+                property double elapsed: 0
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "Time: " + (currentTimeTimer.elapsed/1000).toFixed(1)
+                text: "Time: " + (elapsed).toFixed(1)
                 font.family: "Linux Libertine"
                 font.pixelSize: experimentRoot.width * 0.015
 
-                Timer {
-                    id: currentTimeTimer
-                    property int elapsed: 0
-                    property int previousElapsed: 0
-                    property double previousTime: 0
-
-                    function reset() {
-                        previousElapsed = 0
-                        elapsed = 0
-                    }
-
-                    running: world.running
-                    interval: 50
-                    repeat: true
-                    onTriggered: {
-                        var currentTime = Date.now()
-                        if(previousTime > 0) {
-                            var diff = currentTime - previousTime
-                            elapsed += diff
-                        }
-                        previousTime = currentTime
-                    }
+                function reset() {
+                    elapsed = 0
                 }
+
+//                Timer {
+//                    id: currentTimeTimer
+//                    property int elapsed: 0
+//                    property int previousElapsed: 0
+//                    property double previousTime: 0
+
+//                    function reset() {
+//                        previousElapsed = 0
+//                        elapsed = 0
+//                    }
+
+//                    running: world.running
+//                    interval: 50
+//                    repeat: true
+//                    onTriggered: {
+//                        var currentTime = Date.now()
+//                        if(previousTime > 0) {
+//                            var diff = currentTime - previousTime
+//                            elapsed += diff
+//                        }
+//                        previousTime = currentTime
+//                    }
+//                }
             }
 
             World {
@@ -106,6 +111,13 @@ Experiment {
                 anchors.fill: parent
 
                 running: experimentRoot.running && global.running
+
+                onStepped: {
+                    currentTimeText.elapsed += world.timeStep
+                    if(currentTimeText.elapsed > timerSlider.value) {
+                        ball.gravityScale = 1
+                    }
+                }
 
                 Body {
                     id: ball
@@ -248,15 +260,6 @@ Experiment {
             }
         }
 
-        Timer {
-            id: dropTimer
-            running: false
-            interval: timerSlider.value * 1000
-            onTriggered: {
-                ball.gravityScale = 1
-            }
-        }
-
         Column {
             id: buttonRow
             anchors {
@@ -288,7 +291,6 @@ Experiment {
                 onClicked: {
                     global.reset()
                     global.running = true
-                    dropTimer.restart()
                 }
             }
         }
