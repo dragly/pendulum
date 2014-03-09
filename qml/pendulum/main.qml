@@ -10,7 +10,7 @@ Rectangle {
     height: 720
 
     FontLoader {
-        source: "qrc:/fonts/roboto/Roboto-Light.ttf"
+        source: "../../fonts/roboto/Roboto-Light.ttf"
     }
 
     VisualItemModel {
