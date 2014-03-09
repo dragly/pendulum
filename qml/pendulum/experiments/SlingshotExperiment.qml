@@ -82,6 +82,7 @@ Experiment {
                     property point startPosition: Qt.point(world.width * 0.1, ground.y - world.height * 0.2)
                     property point mousePos
                     property real springConstant: 10
+                    fixedRotation: false
 
                     onStartPositionChanged: global.reset()
 
@@ -100,16 +101,18 @@ Experiment {
                     height: width
                     bodyType: Body.Dynamic
                     fixtures: Circle {
+                        id: ballFixture
                         radius: parent.width / 2
                         anchors.centerIn: parent
-                        density: 1.0
+                        density: 10.0
                         restitution: 0.6
-                        friction: 0.0
+                        friction: 1.0
                     }
                     sleepingAllowed: false
                     //                    linearDamping: airResistanceSlider.value
 
                     Rectangle {
+                        id: ballRect
                         anchors.fill: parent
                         radius: width / 2
                         color: "#98F8F8"
@@ -130,6 +133,41 @@ Experiment {
                                 slingshotLine.visible = false
                             }
                         }
+                        Rectangle {
+                            x: parent.width * 0.5
+                            y: parent.height * 0.1
+                            width: parent.width * 0.1
+                            height: width
+                            radius: width / 2
+                            color: "#90C0F8"
+                        }
+                    }
+                }
+
+                Repeater {
+                    model: 10
+                    delegate: Body {
+//                        x: world.width * 0.6 + width * index
+//                        y: world.width * 0.6 + width * index
+//                        width: parent.width > 0 ? world.width * 0.02 : 5
+//                        height: parent.width > 0 ? world.width * 0.02 : 5
+                        x: 100 + index * 50
+                        y: 100
+                        width: 50
+                        height: 50
+                        bodyType: Body.Dynamic
+                        fixtures: Box {
+                            anchors.fill: parent
+                            density: 10
+                            friction: 1.0
+                            restitution: 0.4
+                        }
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "#FEABCD"
+                            border.color: "#FEFECD"
+                            border.width: 2
+                        }
                     }
                 }
 
@@ -149,7 +187,7 @@ Experiment {
                     fixtures: Box {
                         anchors.fill: parent
                         density: 1
-                        friction: 0.0
+                        friction: 1.0
                     }
                     sleepingAllowed: false
 
