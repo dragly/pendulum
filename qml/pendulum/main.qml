@@ -2,6 +2,7 @@ import QtQuick 2.0
 import Box2D 1.0
 import QtQuick.Controls 1.1
 import "experiments"
+import "equipment"
 
 Rectangle {
     id: rectRoot
@@ -18,23 +19,36 @@ Rectangle {
             anchors.fill: parent
             title: "Friction"
             DropExperiment {
-
+                width: rectRoot.width
+                height: rectRoot.height
             }
         }
         Project {
             anchors.fill: parent
-            title: "Pendulum"
+            title: "Periodic Motion"
             IntroductionExperiment {
-
+                width: rectRoot.width
+                height: rectRoot.height
             }
             TimePeriodExperiment {
-
+                width: rectRoot.width
+                height: rectRoot.height
             }
             AirResistanceExperiment {
-
+                width: rectRoot.width
+                height: rectRoot.height
             }
             DoublePendulumExperiment {
-
+                width: rectRoot.width
+                height: rectRoot.height
+            }
+        }
+        Project {
+            anchors.fill: parent
+            title: "Playground"
+            SlingshotExperiment {
+                width: rectRoot.width
+                height: rectRoot.height
             }
         }
     }
@@ -64,8 +78,9 @@ Rectangle {
             anchors {
                 top: contentsText.bottom
                 left: contentsText.left
+                leftMargin: parent.width * 0.1
                 right: parent.right
-                rightMargin: parent.width * 0.1
+                rightMargin: parent.width * 0.3
                 topMargin: parent.height * 0.07
             }
             height: 1000
@@ -74,7 +89,7 @@ Rectangle {
                 model: projectModel.count
                 delegate: Rectangle {
                     property Item item: projectModel.children[index]
-                    width: projectList.width * 0.8
+                    width: projectList.width
                     height: titleText.height
                     Text {
                         id: titleText

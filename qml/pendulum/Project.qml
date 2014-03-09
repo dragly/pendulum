@@ -10,17 +10,19 @@ Rectangle {
     width: 100
     height: 62
 
-    onWidthChanged: layoutChildren()
-    onHeightChanged: layoutChildren()
+    Component.onCompleted: {
+        resetRunning()
+    }
+
     onRunningChanged: resetRunning()
 
-    function layoutChildren() {
-        for(var i in experimentsRow.children) {
-            var child = experimentsRow.children[i]
-            child.width = projectRoot.width
-            child.height = experimentsRow.height
-        }
-    }
+//    function layoutChildren() {
+//        for(var i in experimentsRow.children) {
+//            var child = experimentsRow.children[i]
+//            child.width = projectRoot.width
+//            child.height = experimentsRow.height
+//        }
+//    }
 
     function resetRunning() {
         for(var i in experimentsRow.children) {
@@ -45,9 +47,6 @@ Rectangle {
     }
 
     state: "welcome"
-    Component.onCompleted: {
-        resetRunning()
-    }
 
     MouseArea {
         id: nextExperimentArea
@@ -83,53 +82,11 @@ Rectangle {
         width: parent.width * children.length
         anchors.top: parent.top
         height: parent.height
-        onHeightChanged: {
-            layoutChildren()
-        }
-        onChildrenChanged: {
-            layoutChildren()
-        }
         Behavior on x {
             NumberAnimation {
                 duration: 500
                 easing.overshoot: 0.5
                 easing.type: Easing.InOutQuad
-            }
-        }
-    }
-
-    Rectangle {
-        id: nextButton
-        anchors {
-            right: parent.right
-            bottom: parent.bottom
-        }
-        width: parent.width * 0.05
-        height: width
-//        color: "grey"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                currentExperimentIndex += 1
-            }
-        }
-    }
-
-    Rectangle {
-        id: previousButton
-        anchors {
-            left: parent.left
-            bottom: parent.bottom
-        }
-        width: parent.width * 0.05
-        height: width
-//        color: "grey"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                currentExperimentIndex -= 1
             }
         }
     }
@@ -143,9 +100,6 @@ Rectangle {
 
     Text {
         id: welcomeText
-//        anchors.centerIn: parent
-//        x: parent.width / 2 - width / 2
-//        y: parent.height / 2 - height / 2
         text: "Welcome."
         color: Qt.rgba(0.3, 0.3, 0.3, 1.0)
         font.family: "Roboto"
@@ -186,7 +140,7 @@ Rectangle {
             }
         }
 
-        width: parent.width / 20
+        width: parent.width / 15
         opacity: 0
         SequentialAnimation {
             id: startRectangleAnimation
@@ -228,7 +182,7 @@ Rectangle {
             }
         }
 
-        width: parent.width / 20
+        width: parent.width / 15
         opacity: 0
         SequentialAnimation {
             id: endRectangleAnimation

@@ -4,9 +4,14 @@ import QtQuick.Layouts 1.1
 import Box2D 1.1
 import ".."
 import "../controls"
+import "../equipment"
 
 Experiment {
     id: experimentRoot
+    Component.onCompleted: {
+        global.reset()
+    }
+
     lefts: Column {
         anchors.fill: parent
         spacing: parent.width * 0.01
@@ -20,9 +25,11 @@ Experiment {
 
         Text {
             text: "<p>The box to the right is sliding on a frictionless " +
-                  "surface with a starting velocity of v = 2 m/s. " +
+                  "surface with a starting velocity of v = " +
+                  (cart.startVelocity / 32).toFixed(1) + " m/s. " +
                   "Set the timer so that the ball falls onto " +
-                  "the cart as it passes by.</p>"
+                  "the cart as it passes by.</p>" +
+                  "<p>The constant of gravity is g = 10.0 m/s².</p>"
             width: parent.width
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
             font.family: "Linux Libertine"
@@ -38,6 +45,7 @@ Experiment {
                 right: parent.right
                 top: parent.top
                 bottom: buttonRow.top
+                bottomMargin: experimentRoot.height * 0.05
             }
 
             property bool dragged: false
@@ -99,21 +107,21 @@ Experiment {
 
                 running: experimentRoot.running && global.running
 
-                onWidthChanged: global.reset()
-                onHeightChanged: global.reset()
-
                 Body {
                     id: ball
                     property bool hasCollidedWithCart: false
                     property bool hasCollidedWithOther: false
+                    property point startPosition: Qt.point(world.width * 0.8, ground.y - world.width * 0.5)
+
+                    onStartPositionChanged: global.reset()
 
                     function reset() {
                         linearVelocity.x = 0
                         linearVelocity.y = 0
                         angularVelocity = 0
                         rotation = 0
-                        x = world.width * 0.8
-                        y = world.height * 0.1
+                        x = startPosition.x
+                        y = startPosition.y
                         gravityScale = 0
                         hasCollidedWithCart = false
                         hasCollidedWithOther = false
@@ -131,7 +139,7 @@ Experiment {
                                     statusText.color = "green"
                                 } else {
                                     ball.hasCollidedWithOther = true
-                                    statusText.text = "Doh!"
+                                    statusText.text = "Try again..."
                                     statusText.color = "darkred"
                                 }
                             }
@@ -165,20 +173,22 @@ Experiment {
 
                 Body {
                     id: cart
+                    property point startPosition: Qt.point(world.width * 0.1, world.height - ground.height - cart.height)
+                    property real startVelocity: world.width * 0.1
+
+                    onStartPositionChanged: global.reset()
 
                     function reset() {
-                        linearVelocity.x = 2 * 32
+                        linearVelocity.x = startVelocity
                         linearVelocity.y = 0
                         angularVelocity = 0
                         rotation = 0
-                        x = world.width * 0.1
-                        y = world.height - ground.height - height
+                        x = startPosition.x
+                        y = startPosition.y
                     }
 
-                    width: parent.width * 0.1 + 5
-                    height: width + 5
-                    x: 400
-                    y: 300
+                    width: parent.width * 0.15 + 5
+                    height: width * 0.7 + 5
                     bodyType: Body.Dynamic
                     fixtures: Box {
                         id: cartFixture
@@ -202,7 +212,7 @@ Experiment {
                 Body {
                     id: ground
                     width: parent.width + 5
-                    height: parent.width * 0.05 + 5
+                    height: parent.width * 0.08 + 5
                     anchors.bottom: parent.bottom
                     bodyType: Body.Static
                     fixtures: Box {
@@ -218,6 +228,22 @@ Experiment {
                         border.color: "#B8B8B8"
                         border.width: 2
                     }
+                }
+
+                Ruler {
+                    id: cartDistanceRuler
+                    x: cart.startPosition.x + cart.width / 2
+                    width: (ball.startPosition.x + ball.width / 2) - (cart.startPosition.x  + cart.width / 2)
+                    height: ground.height * 0.7
+                    anchors.verticalCenter: ground.verticalCenter
+                }
+
+                Ruler {
+                    x: ball.startPosition.x + ball.width + height
+                    y: ball.startPosition.y + ball.width / 2 - linesHeight
+                    width: (ground.y - ball.startPosition.y - ball.width - cart.height - 4)
+                    height: cartDistanceRuler.height
+                    angle: 90
                 }
             }
         }
@@ -247,11 +273,12 @@ Experiment {
                 label: "Drop delay:"
                 comment: (value).toFixed(1) + " s"
                 slider.minimumValue: 0.1
-                slider.maximumValue: 5.0
+                slider.maximumValue: 10.0
                 slider.value: 1.0
                 font.family: "Linux Libertine"
                 font.pixelSize: experimentRoot.width * 0.015
             }
+
             Button {
                 id: resetButton
                 text: "Go!"

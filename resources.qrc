@@ -34,5 +34,7 @@
         <file>fonts/roboto/Roboto-Thin.ttf</file>
         <file>fonts/roboto/Roboto-ThinItalic.ttf</file>
         <file>qml/pendulum/experiments/DropExperiment.qml</file>
+        <file>qml/pendulum/equipment/Ruler.qml</file>
+        <file>qml/pendulum/experiments/SlingshotExperiment.qml</file>
     </qresource>
 </RCC>

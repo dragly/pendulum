@@ -5,6 +5,7 @@ import Box2D 1.1
 import ".."
 Experiment {
     id: experimentRoot
+    Component.onCompleted: global.reset()
     lefts: Column {
         anchors.fill: parent
         spacing: parent.width * 0.01
@@ -54,10 +55,6 @@ Experiment {
             property MouseJoint joint: null
             property Body body: null
 
-            Component.onCompleted: {
-                reset()
-            }
-
             Component {
                 id: jointComponent
                 MouseJoint {
@@ -67,30 +64,6 @@ Experiment {
                     target: Qt.point(350.0,200.0);
                     maxForce: 10000
                 }
-            }
-
-            MouseArea {
-                id: mouseArea
-                onPressed: {
-                    global.mousePosition = Qt.point(mouse.x, mouse.y)
-                    global.createJoint(mouse.x,mouse.y)
-                    if(!global.body) {
-                        mouse.accepted = false
-                    }
-                }
-                onReleased: {
-                    global.mousePosition = Qt.point(mouse.x, mouse.y)
-                    global.destroyJoint();
-                }
-
-                onPositionChanged: {
-                    global.mousePosition = Qt.point(mouse.x, mouse.y)
-                    if(global.dragged == true)
-                    {
-                        global.joint.target = Qt.point(mouse.x,mouse.y);
-                    }
-                }
-                anchors.fill: parent
             }
 
             function createJoint(x,y) {
@@ -122,10 +95,36 @@ Experiment {
             }
 
             function reset() {
-                ropeJoint.length = global.width * 0.3
+                var jointLength = global.width * 0.3
+                ropeJoint.length = jointLength
                 ball.x = mount.x
-                ball.y = mount.y + ropeJoint.length
-                ball.linearVelocity = Qt.point(150,0)
+                ball.y = mount.y + jointLength
+                ball.linearVelocity.x = 150
+                ball.linearVelocity.y = 0
+            }
+
+            MouseArea {
+                id: mouseArea
+                onPressed: {
+                    global.mousePosition = Qt.point(mouse.x, mouse.y)
+                    global.createJoint(mouse.x,mouse.y)
+                    if(!global.body) {
+                        mouse.accepted = false
+                    }
+                }
+                onReleased: {
+                    global.mousePosition = Qt.point(mouse.x, mouse.y)
+                    global.destroyJoint();
+                }
+
+                onPositionChanged: {
+                    global.mousePosition = Qt.point(mouse.x, mouse.y)
+                    if(global.dragged == true)
+                    {
+                        global.joint.target = Qt.point(mouse.x,mouse.y);
+                    }
+                }
+                anchors.fill: parent
             }
 
             World {
@@ -228,12 +227,6 @@ Experiment {
             }
             height: resetButton.height
 
-//            Button {
-//                text: world.running ? "Pause" : "Resume"
-//                onClicked: {
-//                    world.running = !world.running
-//                }
-//            }
             Button {
                 id: resetButton
                 text: "Reset"
