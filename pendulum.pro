@@ -1,7 +1,9 @@
 # Add more folders to ship with the application, here
 folder_01.source = qml/pendulum
 folder_01.target = qml
-DEPLOYMENTFOLDERS = folder_01
+folder_02.source = fonts/roboto
+folder_02.target = fonts
+DEPLOYMENTFOLDERS = folder_01 folder_02
 
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
@@ -25,5 +27,7 @@ OTHER_FILES += \
     android/AndroidManifest.xml \
     README.md
 
-RESOURCES += \
-    resources.qrc
+android {
+    RESOURCES += \
+        resources.qrc
+}

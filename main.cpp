@@ -10,7 +10,11 @@ int main(int argc, char *argv[])
 
     QtQuick2ApplicationViewer viewer;
 //    viewer.setMainQmlFile(QStringLiteral("qrc:/qml/pendulum/main.qml"));
+#ifdef Q_OS_ANDROID
     viewer.setSource(QUrl("qrc:/qml/pendulum/main.qml"));
+#else
+    viewer.setSource(QUrl("qml/pendulum/main.qml"));
+#endif
     viewer.showExpanded();
 
     return app.exec();
