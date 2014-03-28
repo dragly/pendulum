@@ -241,8 +241,6 @@ Rectangle {
         }
     ]
 
-
-
     transitions: [
         Transition {
             id: transition

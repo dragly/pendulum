@@ -141,6 +141,7 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
                     rectRoot.state = ""
+                    projectView.selectedIndex = -1
                 }
             }
         }
@@ -157,10 +158,12 @@ Rectangle {
                 target: projectList
                 visible: false
             }
-            PropertyChanges {
-                target: projectView.selectedProject
-                state: "started"
-            }
         }
     ]
+
+    onStateChanged: {
+        if(state === "project") {
+            projectView.selectedProject.state = "started"
+        }
+    }
 }

@@ -20,8 +20,10 @@ Rectangle {
         for(var i in model.children) {
             if(parseInt(i) === selectedIndex) {
                 model.children[i].visible = true
+                model.children[i].running = true
             } else {
                 model.children[i].visible = false
+                model.children[i].running = false
             }
         }
     }
